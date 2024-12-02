@@ -1,5 +1,11 @@
 fn main() {
-    println!("Hello, world!");
+    let input = include_str!("../input.txt");
+
+    let count = input
+        .lines()
+        .filter(|report: &&str| report_is_safe(*report))
+        .count();
+    println!("Safe reports count: {count}");
 }
 
 fn report_is_safe(report: &str) -> bool {
@@ -21,7 +27,6 @@ fn report_is_safe(report: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
     // So, a report only counts as safe if both of the following are true:
     //
