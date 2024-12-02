@@ -2,8 +2,21 @@ fn main() {
     println!("Hello, world!");
 }
 
-fn safe_cond_1(report: &str) -> bool {
-    todo!()
+fn report_is_safe(report: &str) -> bool {
+    let numbers = report
+        .split_ascii_whitespace()
+        .filter_map(|s| s.parse::<i32>().ok());
+    // all increasing
+    let inc = numbers.clone().is_sorted_by(|a, b| {
+        let diff = b - a;
+        (diff >= 1) && (diff <= 3)
+    });
+    // all decreasing
+    let dec = numbers.is_sorted_by(|a, b| {
+        let diff = a - b;
+        (diff >= 1) && (diff <= 3)
+    });
+    inc || dec
 }
 
 #[cfg(test)]
@@ -29,13 +42,13 @@ mod tests {
 
     //  - The levels are either all increasing or all decreasing.
     #[test]
-    fn safe_condition_1() {
+    fn report_is_safe_test() {
         let mut lines = EXAMPLE.lines();
-        assert_eq!(safe_cond_1(lines.next().unwrap()), true);
-        assert_eq!(safe_cond_1(lines.next().unwrap()), false);
-        assert_eq!(safe_cond_1(lines.next().unwrap()), false);
-        assert_eq!(safe_cond_1(lines.next().unwrap()), false);
-        assert_eq!(safe_cond_1(lines.next().unwrap()), false);
-        assert_eq!(safe_cond_1(lines.next().unwrap()), true);
+        assert_eq!(report_is_safe(lines.next().unwrap()), true);
+        assert_eq!(report_is_safe(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe(lines.next().unwrap()), true);
     }
 }
