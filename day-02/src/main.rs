@@ -3,22 +3,56 @@ fn main() {
 
     let count = input
         .lines()
-        .filter(|report: &&str| report_is_safe(*report))
+        .filter(|report: &&str| report_is_safe_1(*report))
         .count();
-    println!("Safe reports count: {count}");
+    println!("Part 1 - Safe reports count: {count}");
+
+    let count = input
+        .lines()
+        .filter(|report: &&str| report_is_safe_2(*report))
+        .count();
+    println!("Part 2 - Safe reports count: {count}");
 }
 
-fn report_is_safe(report: &str) -> bool {
+fn report_is_safe_1(report: &str) -> bool {
     let numbers = report
         .split_ascii_whitespace()
         .filter_map(|s| s.parse::<i32>().ok());
+
+    let slice: Vec<i32> = numbers.collect();
+    report_is_safe(&slice)
+}
+
+fn report_is_safe_2(report: &str) -> bool {
+    if report_is_safe_1(report) {
+        // println!("{} is SAFE 1", report);
+        return true;
+    }
+
+    let numbers: Vec<i32> = report
+        .split_ascii_whitespace()
+        .filter_map(|s| s.parse::<i32>().ok())
+        .collect();
+
+    let size = numbers.len();
+    for i in 0..size {
+        let (head, tail) = numbers.split_at(i);
+        let arr = [head, &tail[1..]].concat();
+        if report_is_safe(&arr) {
+            return true;
+        }
+    }
+    false
+}
+
+fn report_is_safe(report: &[i32]) -> bool {
     // all increasing
-    let inc = numbers.clone().is_sorted_by(|a, b| {
+    let inc = report.is_sorted_by(|a, b| {
         let diff = b - a;
         (diff >= 1) && (diff <= 3)
     });
     // all decreasing
-    let dec = numbers.is_sorted_by(|a, b| {
+    let dec = report.is_sorted_by(|a, b| {
         let diff = a - b;
         (diff >= 1) && (diff <= 3)
     });
@@ -49,11 +83,22 @@ mod tests {
     #[test]
     fn report_is_safe_test() {
         let mut lines = EXAMPLE.lines();
-        assert_eq!(report_is_safe(lines.next().unwrap()), true);
-        assert_eq!(report_is_safe(lines.next().unwrap()), false);
-        assert_eq!(report_is_safe(lines.next().unwrap()), false);
-        assert_eq!(report_is_safe(lines.next().unwrap()), false);
-        assert_eq!(report_is_safe(lines.next().unwrap()), false);
-        assert_eq!(report_is_safe(lines.next().unwrap()), true);
+        assert_eq!(report_is_safe_1(lines.next().unwrap()), true);
+        assert_eq!(report_is_safe_1(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe_1(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe_1(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe_1(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe_1(lines.next().unwrap()), true);
+    }
+
+    #[test]
+    fn report_is_safe_test_2() {
+        let mut lines = EXAMPLE.lines();
+        assert_eq!(report_is_safe_2(lines.next().unwrap()), true);
+        assert_eq!(report_is_safe_2(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe_2(lines.next().unwrap()), false);
+        assert_eq!(report_is_safe_2(lines.next().unwrap()), true);
+        assert_eq!(report_is_safe_2(lines.next().unwrap()), true);
+        assert_eq!(report_is_safe_2(lines.next().unwrap()), true);
     }
 }
