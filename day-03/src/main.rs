@@ -1,22 +1,34 @@
 fn main() {
-    println!("Hello, world!");
+    let input = include_str!("../input.txt");
+
+    let sum_part_1 = part_1_sum_of_uncorrupted_muls(input);
+    println!("Part 1 - Sum of uncorrupted multiplications: {sum_part_1}");
 }
 
 fn part_1_sum_of_uncorrupted_muls(memory: &str) -> i32 {
     memory
         .split("mul(")
-        .filter(|ins| ins.contains(",") && ins.contains(")"))
-        .filter_map(|ins| match ins.find(')') {
-            Some(i) => Some(ins.split_at(i).0),
-            None => None,
-        })
         .filter_map(|args| {
-            let mut args = args.split(",");
-            match (args.next(), args.next()) {
-                (Some(a), Some(b)) => Some((a, b)),
-                _ => None,
+            let args = match args.find(',') {
+                Some(i) => args.split_at(i),
+                None => ("", ""),
+            };
+            let a = args.0;
+            if a.is_empty() || !a.chars().all(char::is_numeric) {
+                return None;
             }
+            let b = &args.1[1..];
+            let b = match b.find(')') {
+                Some(i) => &b[..i],
+                None => "",
+            };
+            if b.is_empty() || !b.chars().all(char::is_numeric) {
+                return None;
+            }
+
+            Some((a, b))
         })
+        .filter(|(a, b)| a.len() <= 3 && b.len() <= 3)
         .filter_map(|(a, b)| match (a.parse::<i32>(), b.parse::<i32>()) {
             (Ok(a), Ok(b)) => Some((a, b)),
             _ => None,
