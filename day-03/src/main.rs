@@ -3,6 +3,9 @@ fn main() {
 
     let sum_part_1 = part_1_sum_of_uncorrupted_muls(input);
     println!("Part 1 - Sum of uncorrupted multiplications: {sum_part_1}");
+
+    let sum_part_2 = part_2_sum_of_uncorrupted_muls(input);
+    println!("Part 2 - Sum of uncorrupted multiplications: {sum_part_2}");
 }
 
 fn part_1_sum_of_uncorrupted_muls(memory: &str) -> i32 {
@@ -38,7 +41,38 @@ fn part_1_sum_of_uncorrupted_muls(memory: &str) -> i32 {
 }
 
 fn part_2_sum_of_uncorrupted_muls(memory: &str) -> i32 {
-    0
+    let mut sum = 0;
+    let mut mem = memory;
+    let mut enabled = true;
+
+    loop {
+        if enabled {
+            let dont = mem.find("don't()");
+            match dont {
+                Some(pos) => {
+                    sum += part_1_sum_of_uncorrupted_muls(&mem[..pos]);
+                    mem = &mem[pos + 7..];
+                    enabled = false;
+                }
+                None => {
+                    sum += part_1_sum_of_uncorrupted_muls(mem);
+                    break;
+                }
+            }
+        } else {
+            let doo = mem.find("do()");
+            match doo {
+                Some(pos) => {
+                    mem = &mem[pos + 4..];
+                    enabled = true;
+                }
+                None => {
+                    break;
+                }
+            }
+        }
+    }
+    sum
 }
 
 #[cfg(test)]
