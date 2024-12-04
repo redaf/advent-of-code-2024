@@ -37,6 +37,10 @@ fn part_1_sum_of_uncorrupted_muls(memory: &str) -> i32 {
         .sum()
 }
 
+fn part_2_sum_of_uncorrupted_muls(memory: &str) -> i32 {
+    0
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -47,5 +51,13 @@ mod tests {
     #[test]
     fn part_1_example_result() {
         assert_eq!(161, part_1_sum_of_uncorrupted_muls(EXAMPLE_PART_1));
+    }
+
+    const EXAMPLE_PART_2: &str =
+        "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
+
+    #[test]
+    fn part_2_example_result() {
+        assert_eq!(48, part_2_sum_of_uncorrupted_muls(EXAMPLE_PART_2));
     }
 }
