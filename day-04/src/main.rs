@@ -3,7 +3,7 @@ use core::str;
 fn main() {
     let word_search = include_str!("../input.txt");
     println!("Part 1 - XMAS count: {}", xmas_count_1(word_search));
-    println!("Part 2 - XMAS count: {}", xmas_count_2(word_search));
+    println!("Part 2 - X-MAS count: {}", xmas_count_2(word_search));
 }
 
 struct WordSearch<'a> {
