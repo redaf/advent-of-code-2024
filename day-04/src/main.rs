@@ -21,6 +21,7 @@ impl<'a> WordSearch<'a> {
         }
     }
 
+    #[cfg(test)]
     fn side(&self) -> usize {
         self.side
     }
