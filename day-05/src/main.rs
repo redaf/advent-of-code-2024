@@ -2,11 +2,39 @@ fn main() {
     println!("Hello, world!");
 }
 
+struct PageOrderingRules(Vec<(u8, u8)>);
+
+impl From<&str> for PageOrderingRules {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     const EXAMPLE_1: &str = include_str!("../example_1.txt");
+
+    fn parse_rules(safety_manual: &str) -> Vec<(u8, u8)> {
+        safety_manual
+            .lines()
+            .filter(|line| line.contains('|'))
+            .filter_map(|line| {
+                let mut split = line.split('|');
+                match (split.next(), split.next()) {
+                    (Some(a), Some(b)) => Some((a, b)),
+                    _ => None,
+                }
+            })
+            .filter_map(|(a, b)| match (a.parse::<u8>(), b.parse::<u8>()) {
+                (Ok(a), Ok(b)) => Some((a, b)),
+                _ => None,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn rules_parser_test() {
+        let rules = parse_rules(EXAMPLE_1);
+        assert_eq!(rules[0], (47, 53));
+    }
 
     fn update_order_is_correct(rules: &[(u8, u8)], update: &[u8]) -> bool {
         false
