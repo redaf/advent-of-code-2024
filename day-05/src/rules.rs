@@ -1,4 +1,4 @@
-type Rule = (u8, u8);
+pub type Rule = (u8, u8);
 pub struct PageOrderingRules(Vec<Rule>);
 
 impl From<&str> for PageOrderingRules {
