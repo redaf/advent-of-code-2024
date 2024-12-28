@@ -28,4 +28,39 @@ impl PageOrderingRules {
     pub fn get(&self, index: usize) -> Option<&Rule> {
         self.0.get(index)
     }
+
+    pub fn before(&self, page_number: u8) -> Vec<u8> {
+        self.0
+            .iter()
+            .filter_map(|(l, r)| {
+                if *r == page_number {
+                    return Some(*l);
+                } else {
+                    return None;
+                }
+            })
+            .collect()
+    }
+
+    pub fn after(&self, page_number: u8) -> Vec<u8> {
+        self.0
+            .iter()
+            .filter_map(|(l, r)| {
+                if *l == page_number {
+                    return Some(*r);
+                } else {
+                    return None;
+                }
+            })
+            .collect()
+    }
+}
+
+impl IntoIterator for PageOrderingRules {
+    type Item = Rule;
+    type IntoIter = std::vec::IntoIter<Rule>;
+
+    fn into_iter(self) -> <Self as IntoIterator>::IntoIter {
+        self.0.into_iter()
+    }
 }

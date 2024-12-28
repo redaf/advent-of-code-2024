@@ -1,14 +1,6 @@
 pub type Update = Vec<u8>;
 pub struct Updates(Vec<Update>);
 
-// fn iter<'a>(s: &'a str) -> impl Iterator<Item = Update> + 'a {
-//     s.lines().filter(|line| line.contains(',')).map(|line| {
-//         line.split(',')
-//             .flat_map(|item| item.parse::<u8>())
-//             .collect()
-//     })
-// }
-
 impl From<&str> for Updates {
     fn from(safety_manual: &str) -> Self {
         Updates(
@@ -29,5 +21,14 @@ impl Updates {
     #[cfg(test)]
     pub fn get(&self, index: usize) -> Option<&Update> {
         self.0.get(index)
+    }
+}
+
+impl IntoIterator for Updates {
+    type Item = Update;
+    type IntoIter = std::vec::IntoIter<Update>;
+
+    fn into_iter(self) -> <Self as IntoIterator>::IntoIter {
+        self.0.into_iter()
     }
 }
