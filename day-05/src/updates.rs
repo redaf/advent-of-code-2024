@@ -1,4 +1,5 @@
 pub type Update = Vec<u8>;
+#[derive(Clone)]
 pub struct Updates(Vec<Update>);
 
 impl From<&str> for Updates {

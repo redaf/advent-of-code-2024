@@ -1,4 +1,5 @@
 use rules::PageOrderingRules;
+use std::cmp::Ordering;
 use updates::{Update, Updates};
 
 mod rules;
@@ -11,7 +12,12 @@ fn main() {
 
     println!(
         "Part 1 - Sum of middle pages: {}",
-        middle_pages_sum(updates, &rules)
+        middle_pages_sum(updates.clone(), &rules)
+    );
+
+    println!(
+        "Part 2 - Sum of incorrect middle pages: {}",
+        incorrect_middle_pages_sum(updates, &rules)
     );
 }
 
@@ -38,10 +44,40 @@ fn update_is_correct(update: &Update, rules: &PageOrderingRules) -> bool {
     true
 }
 
+fn correct_update(incorrect_update: &Update, rules: &PageOrderingRules) -> Vec<u8> {
+    let mut sorted = incorrect_update.clone();
+    sorted.sort_by(|a, b| {
+        let before = rules.before(*a);
+        let after = rules.after(*a);
+
+        if before.contains(b) {
+            return Ordering::Greater;
+        } else if after.contains(b) {
+            return Ordering::Less;
+        } else {
+            return Ordering::Equal;
+        }
+    });
+
+    sorted
+}
+
 fn middle_pages_sum(updates: Updates, rules: &PageOrderingRules) -> usize {
     updates
         .into_iter()
         .filter(|update| update_is_correct(update, &rules))
+        .map(|update| {
+            debug_assert!(update.len() % 2 == 1);
+            update[update.len() / 2] as usize
+        })
+        .sum::<usize>()
+}
+
+fn incorrect_middle_pages_sum(updates: Updates, rules: &PageOrderingRules) -> usize {
+    updates
+        .into_iter()
+        .filter(|update| !update_is_correct(update, &rules))
+        .map(|incorrect_update| correct_update(&incorrect_update, rules))
         .map(|update| {
             debug_assert!(update.len() % 2 == 1);
             update[update.len() / 2] as usize
@@ -105,6 +141,14 @@ mod tests {
         let updates: Updates = EXAMPLE_1.into();
         let sum: usize = middle_pages_sum(updates, &rules);
         assert_eq!(143, sum);
+    }
+
+    #[test]
+    fn correction() {
+        let rules: PageOrderingRules = EXAMPLE_1.into();
+        let updates: Updates = EXAMPLE_1.into();
+        let sum = incorrect_middle_pages_sum(updates, &rules);
+        assert_eq!(123, sum);
     }
 
     #[test]
